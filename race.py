@@ -1,9 +1,9 @@
 # import pygame module in this program 
 import pygame 
 
-
+clock = pygame.time.Clock()
 #Variables  
-timer = 0
+timer = pygame.time.get_ticks
 race_start_time = 0
 
 left_lane_start_time = 0
