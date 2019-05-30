@@ -73,7 +73,7 @@ display_surface = pygame.display.set_mode((X, Y ))
 pygame.display.set_caption('Race') 
   
 # create a surface object, image is drawn on it. 
-#image = pygame.image.load('images/mustang.jpg') 
+image = pygame.image.load('images/mustang.jpg') 
   
 # infinite game loop 
 while True : 
@@ -85,7 +85,7 @@ while True :
     # copying the image surface object 
     # to the display surface object at 
     # (0, 0) coordinate. 
-    #display_surface.blit(image, (0, 0)) 
+    display_surface.blit(image, (0, 0)) 
 
     #Draw lights in correct state
     if stage_1_left == True:
@@ -167,6 +167,7 @@ while True :
     display_surface.blit(left_elapsed_title, (50,300)) 
     left_elapsed= font_big.render(str(left_lane_total_time), True, white)
     display_surface.blit(left_elapsed, (50,350)) 
+                                                                                        
 
     right_elapsed_title = font.render('Elasped Time', True, white)
     display_surface.blit(right_elapsed_title, (580,300)) 
