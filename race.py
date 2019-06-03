@@ -6,6 +6,8 @@ clock = pygame.time.Clock()
 #Variables  
 start_of_game_timer = time.clock()
 race_start_time = 0
+countdown_started = False
+time_christmas_tree_started = 0.0
 
 left_lane_start_time = 0
 left_lane_end_time = 0
@@ -67,8 +69,11 @@ def car_start_button_pressed(lane):
 def finish_line_crossed(lane):
     pass
 
-def start_timer():
-    pass
+def start_countdown():
+    print("countdown is starting")
+    global countdown_started, time_christmas_tree_started
+    countdown_started = True
+    time_christmas_tree_started = time.clock()
 
 def start_race():
     pass
@@ -83,11 +88,58 @@ def countdown_ready():
     else:
         ready_for_countdown = False
 
+def gate_control():
+    global left_lane_release_down, right_lane_release_down
+    if left_lane_release_down == True:
+        pass#Keep gate open
+    else:
+        pass#Close gate
+    if right_lane_release_down == True:
+        pass #Keep gate open
+    else:
+        pass#Close gate
 
+def countdown_control():
+    #control the light countdown
+    global time_christmas_tree_started, yellow_1_left, yellow_1_right, yellow_2_left, yellow_2_right, yellow_3_left, yellow_3_right, green_left, green_right, red_left, red_right
+    if countdown_started == True:
+
+        time_now = time.clock()
+
+        interval_between_lights = 0.5
+
+        # print(time_now)
+        # print(interval_between_lights)
+        if ((interval_between_lights *1) + time_christmas_tree_started) < time_now:
+            yellow_1_left = True
+            yellow_1_right = True
+            print("yellow 1")
+
+        if ((interval_between_lights * 2) + time_christmas_tree_started) < time_now:
+            yellow_2_left = True
+            yellow_2_right = True
+            print("yellow 2")
+        if ((interval_between_lights * 3) + time_christmas_tree_started) < time_now:
+            yellow_3_left = True
+            yellow_3_right = True
+            print("yellow 3")
+        if ((interval_between_lights * 4) + time_christmas_tree_started) < time_now:
+            if red_left == False:
+                green_left = True
+            if red_right == False:
+                green_right = True
+            print("green")
+
+
+def end_race():
+    pass
 # activate the pygame library . 
 # initiate pygame and give permission 
 # to use pygame's functionality. 
 pygame.init() 
+
+FPS = 30 # frames per second setting
+fpsClock = pygame.time.Clock()
   
 # define the RGB value 
 # for colors
@@ -222,8 +274,10 @@ while True :
   
 
     #Code for game logic
+    countdown_control()
     countdown_ready()
-
+    if ready_for_countdown == True and countdown_started == False:
+        start_countdown()
 
     # iterate over the list of Event objects 
     # that was returned by pygame.event.get() method. 
@@ -247,3 +301,4 @@ while True :
   
         # Draws the surface object to the screen.   
         pygame.display.update()  
+        fpsClock.tick(FPS)
