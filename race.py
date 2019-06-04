@@ -138,8 +138,8 @@ def end_race():
 # to use pygame's functionality. 
 pygame.init() 
 
-FPS = 30 # frames per second setting
-fpsClock = pygame.time.Clock()
+# FPS = 30 # frames per second setting
+# fpsClock = pygame.time.Clock()
   
 # define the RGB value 
 # for colors
@@ -299,6 +299,6 @@ while True :
             # quit the program. 
             quit() 
   
-        # Draws the surface object to the screen.   
-        pygame.display.update()  
-        fpsClock.tick(FPS)
+    # Draws the surface object to the screen.   
+    pygame.display.flip()  
+    # fpsClock.tick(FPS)
