@@ -49,70 +49,84 @@ left_car_release_time = 0.0
 right_car_released = False
 right_car_release_time = 0.0
 
-left_car_finised = False
+left_car_finished = False
 left_car_finish_time = 0.0
 right_car_finished = False
 right_car_finish_time = 0.0
-
-left_lane_disqualify = False
-right_lane_disqualify = False
 
 
 #List of functions needed for the game
 
 def car_start_button_pressed(lane):
-    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left
+    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left, left_car_released, right_car_released
    
     if ready_for_countdown == False:
         if lane == "left":
             left_lane_ready = True
             stage_1_left = True
             stage_2_left = True
+            print(lane + " ready for countdown")
         if lane == "right":
             right_lane_ready = True
             stage_1_right = True
             stage_2_right = True
+            print(lane + " ready for countdown")
 
     if countdown_started == True:
         if lane == "left":
             if green_left == True and red_left == False:
                 release_car(lane)
-        else:
-            red_left = True
+                print(lane + " released")
+            else:
+                if left_car_released == False:
+                    red_left = True
+                    left_car_released = True
+                    print(lane + " disqualified")
 
         if lane == "right":
             if green_right == True and red_right == False:
                 release_car(lane)
-        else:
-            red_right = True
+                print(lane + " released")
+            else:
+                if right_car_released == False:
+                    red_right = True
+                    right_car_released = True
+                    print(lane + " disqualified")
 
 def finish_line_crossed(lane):
+    global left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
     if lane == "left":
-        left_car_finised = True
-        left_car_finish_time = time.clock()
-        print("Left car finished")
+        if left_car_finished == False:
+            left_car_finished = True
+            left_car_finish_time = time.clock()
+            print("Left car finished")
     if lane == "right":
-        right_car_finised = True
-        right_car_finish_time = time.clock()
-        print("Right car finished")
+        if right_car_finished == False:
+            right_car_finished = True
+            right_car_finish_time = time.clock()
+            print("Right car finished")
     
 
 def start_countdown():
-    print("countdown is starting")
     global countdown_started, time_christmas_tree_started
     countdown_started = True
     time_christmas_tree_started = time.clock()
+    print("countdown is starting")
     #reset times
 
 def release_car(lane):
     global left_car_released, left_car_release_time, right_car_released, right_car_release_time
-    print(lane + " car released")
+    
     if lane == "left":
-        left_car_released = True
-        left_car_release_time = time.clock()
+        if left_car_released == False:
+            left_car_released = True
+            left_car_release_time = time.clock()
+            print(lane + " car released")
     if lane == "right":
-        right_car_released = True
-        right_car_release_time = time.clock()
+        if right_car_released == False:
+            right_car_released = True
+            right_car_release_time = time.clock()
+            print(lane + " car released")
 
 def countdown_ready():
     global left_lane_ready, right_lane_ready, ready_for_countdown
@@ -124,25 +138,21 @@ def countdown_ready():
 def gate_control():
     global left_lane_release_down, right_lane_release_down
     if left_lane_release_down == True:
-        pass#Keep gate open
+        print("Left lane gate open")
     else:
-        pass#Close gate
+        print("Left lane gate closed")
     if right_lane_release_down == True:
-        pass #Keep gate open
+        print("Right lane gate open")
     else:
-        pass#Close gate
+        print("Right lane gate closed")
 
 def countdown_control():
     #control the light countdown
     global time_christmas_tree_started, yellow_1_left, yellow_1_right, yellow_2_left, yellow_2_right, yellow_3_left, yellow_3_right, green_left, green_right, red_left, red_right
     if countdown_started == True:
-
         time_now = time.clock()
-
         interval_between_lights = 0.5
 
-        # print(time_now)
-        # print(interval_between_lights)
         if ((interval_between_lights *1) + time_christmas_tree_started) < time_now:
             yellow_1_left = True
             yellow_1_right = True
@@ -163,9 +173,11 @@ def countdown_control():
 
 
 def end_race():
-    if left_car_finised and right_car_finished:
-        pass
+    global left_car_finished, right_car_finished
+    if left_car_finished == True and right_car_finished == True:
+        print("Race ended")
         #Calculate times
+        
         #reset variables
 
 # activate the pygame library . 
@@ -309,6 +321,7 @@ while True :
     countdown_ready()
     if ready_for_countdown == True and countdown_started == False:
         start_countdown()
+    end_race()
 
     # iterate over the list of Event objects 
     # that was returned by pygame.event.get() method. 
