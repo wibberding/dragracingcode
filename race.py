@@ -2,7 +2,6 @@
 import pygame 
 import time
 
-clock = pygame.time.Clock()
 #Variables  
 start_of_game_timer = time.clock()
 race_start_time = 0
@@ -20,6 +19,8 @@ right_lane_reaction_time = 0.00
 right_lane_total_time = 0.00
 
 #Light states
+
+#Left lights
 stage_1_left = False
 stage_2_left = False
 yellow_1_left = False
@@ -28,6 +29,7 @@ yellow_3_left = False
 green_left = False
 red_left = False
 
+#right lights
 stage_1_right = False
 stage_2_right = False
 yellow_1_right = False
@@ -47,6 +49,11 @@ left_car_release_time = 0.0
 right_car_released = False
 right_car_release_time = 0.0
 
+left_car_finised = False
+left_car_finish_time = 0.0
+right_car_finished = False
+right_car_finish_time = 0.0
+
 left_lane_disqualify = False
 right_lane_disqualify = False
 
@@ -55,6 +62,7 @@ right_lane_disqualify = False
 
 def car_start_button_pressed(lane):
     global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left
+   
     if ready_for_countdown == False:
         if lane == "left":
             left_lane_ready = True
@@ -64,6 +72,7 @@ def car_start_button_pressed(lane):
             right_lane_ready = True
             stage_1_right = True
             stage_2_right = True
+
     if countdown_started == True:
         if lane == "left":
             if green_left == True and red_left == False:
@@ -78,20 +87,32 @@ def car_start_button_pressed(lane):
             red_right = True
 
 def finish_line_crossed(lane):
-    pass
+    if lane == "left":
+        left_car_finised = True
+        left_car_finish_time = time.clock()
+        print("Left car finished")
+    if lane == "right":
+        right_car_finised = True
+        right_car_finish_time = time.clock()
+        print("Right car finished")
+    
 
 def start_countdown():
     print("countdown is starting")
     global countdown_started, time_christmas_tree_started
     countdown_started = True
     time_christmas_tree_started = time.clock()
-
-
-def start_race():
-    pass
+    #reset times
 
 def release_car(lane):
+    global left_car_released, left_car_release_time, right_car_released, right_car_release_time
     print(lane + " car released")
+    if lane == "left":
+        left_car_released = True
+        left_car_release_time = time.clock()
+    if lane == "right":
+        right_car_released = True
+        right_car_release_time = time.clock()
 
 def countdown_ready():
     global left_lane_ready, right_lane_ready, ready_for_countdown
@@ -142,7 +163,11 @@ def countdown_control():
 
 
 def end_race():
-    pass
+    if left_car_finised and right_car_finished:
+        pass
+        #Calculate times
+        #reset variables
+
 # activate the pygame library . 
 # initiate pygame and give permission 
 # to use pygame's functionality. 
@@ -293,6 +318,10 @@ while True :
                 car_start_button_pressed("left")
             if event.key == pygame.K_w:
                 car_start_button_pressed("right")
+            if event.key == pygame.K_a:
+                finish_line_crossed("left")
+            if event.key == pygame.K_s:
+                finish_line_crossed("right")
 
         # if event object type is QUIT 
         # then quitting the pygame 
