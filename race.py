@@ -6,7 +6,7 @@ clock = pygame.time.Clock()
 #Variables  
 start_of_game_timer = time.clock()
 race_start_time = 0
-countdown_started = False
+countdown_started = False #When christmas tree starts
 time_christmas_tree_started = 0.0
 
 left_lane_start_time = 0
@@ -27,6 +27,7 @@ yellow_2_left = False
 yellow_3_left = False
 green_left = False
 red_left = False
+
 stage_1_right = False
 stage_2_right = False
 yellow_1_right = False
@@ -41,6 +42,11 @@ left_lane_release_down = False
 right_lane_release_down = False
 ready_for_countdown = False
 
+left_car_released = False
+left_car_release_time = 0.0
+right_car_released = False
+right_car_release_time = 0.0
+
 left_lane_disqualify = False
 right_lane_disqualify = False
 
@@ -48,7 +54,7 @@ right_lane_disqualify = False
 #List of functions needed for the game
 
 def car_start_button_pressed(lane):
-    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right
+    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left
     if ready_for_countdown == False:
         if lane == "left":
             left_lane_ready = True
@@ -58,13 +64,18 @@ def car_start_button_pressed(lane):
             right_lane_ready = True
             stage_1_right = True
             stage_2_right = True
-    if ready_for_countdown == True:
+    if countdown_started == True:
         if lane == "left":
-            if green_left == True:
+            if green_left == True and red_left == False:
                 release_car(lane)
+        else:
+            red_left = True
+
         if lane == "right":
-            if green_right == True:
+            if green_right == True and red_right == False:
                 release_car(lane)
+        else:
+            red_right = True
 
 def finish_line_crossed(lane):
     pass
@@ -75,11 +86,12 @@ def start_countdown():
     countdown_started = True
     time_christmas_tree_started = time.clock()
 
+
 def start_race():
     pass
 
 def release_car(lane):
-    pass
+    print(lane + " car released")
 
 def countdown_ready():
     global left_lane_ready, right_lane_ready, ready_for_countdown
@@ -113,22 +125,20 @@ def countdown_control():
         if ((interval_between_lights *1) + time_christmas_tree_started) < time_now:
             yellow_1_left = True
             yellow_1_right = True
-            print("yellow 1")
 
         if ((interval_between_lights * 2) + time_christmas_tree_started) < time_now:
             yellow_2_left = True
             yellow_2_right = True
-            print("yellow 2")
+
         if ((interval_between_lights * 3) + time_christmas_tree_started) < time_now:
             yellow_3_left = True
             yellow_3_right = True
-            print("yellow 3")
+
         if ((interval_between_lights * 4) + time_christmas_tree_started) < time_now:
             if red_left == False:
                 green_left = True
             if red_right == False:
                 green_right = True
-            print("green")
 
 
 def end_race():
@@ -137,9 +147,6 @@ def end_race():
 # initiate pygame and give permission 
 # to use pygame's functionality. 
 pygame.init() 
-
-# FPS = 30 # frames per second setting
-# fpsClock = pygame.time.Clock()
   
 # define the RGB value 
 # for colors
@@ -255,8 +262,7 @@ while True :
     display_surface.blit(left_elapsed_title, (50,300)) 
     left_elapsed= font_big.render(str(left_lane_total_time), True, white)
     display_surface.blit(left_elapsed, (50,350)) 
-                                                                                        
-
+                                                                                      
     right_elapsed_title = font.render('Elasped Time', True, white)
     display_surface.blit(right_elapsed_title, (580,300)) 
     right_elapsed= font_big.render(str(right_lane_total_time), True, white)
@@ -301,4 +307,3 @@ while True :
   
     # Draws the surface object to the screen.   
     pygame.display.flip()  
-    # fpsClock.tick(FPS)
