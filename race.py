@@ -54,6 +54,8 @@ left_car_finish_time = 0.0
 right_car_finished = False
 right_car_finish_time = 0.0
 
+race_ended = False
+
 
 #List of functions needed for the game
 
@@ -81,6 +83,7 @@ def car_start_button_pressed(lane):
                 if left_car_released == False:
                     red_left = True
                     left_car_released = True
+                    finish_line_crossed(lane)
                     print(lane + " disqualified")
 
         if lane == "right":
@@ -91,7 +94,10 @@ def car_start_button_pressed(lane):
                 if right_car_released == False:
                     red_right = True
                     right_car_released = True
+                    finish_line_crossed(lane)
                     print(lane + " disqualified")
+    if race_ended == True:
+        reset_game()
 
 def finish_line_crossed(lane):
     global left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
@@ -108,9 +114,10 @@ def finish_line_crossed(lane):
     
 
 def start_countdown():
-    global countdown_started, time_christmas_tree_started
+    global countdown_started, time_christmas_tree_started, race_start_time
     countdown_started = True
     time_christmas_tree_started = time.clock()
+    race_start_time = time_christmas_tree_started + 2
     print("countdown is starting")
     #reset times
 
@@ -173,13 +180,80 @@ def countdown_control():
 
 
 def end_race():
-    global left_car_finished, right_car_finished
-    if left_car_finished == True and right_car_finished == True:
+    global left_car_finished, right_car_finished, race_start_time, left_car_release_time, right_car_release_time, left_car_finish_time, right_car_finish_time, left_reaction, right_reaction, left_elapsed, right_elapsed, race_ended, left_lane_total_time, right_lane_total_time, left_lane_reaction_time, right_lane_reaction_time, left_car_release_time, right_car_release_time
+    if left_car_finished == True and right_car_finished == True and race_ended == False:
         print("Race ended")
+        race_ended = True
         #Calculate times
-        
+        left_lane_total_time = left_car_finish_time - race_start_time
+        right_lane_total_time = right_car_finish_time - race_start_time
+        left_lane_reaction_time = left_car_release_time - race_start_time
+        right_lane_reaction_time = right_car_release_time - race_start_time
+        print(left_elapsed)
+        print(right_elapsed)
         #reset variables
 
+def reset_game():
+    global start_of_game_timer, race_start_time, countdown_started, time_christmas_tree_started
+    start_of_game_timer = time.clock()
+    race_start_time = 0
+    countdown_started = False #When christmas tree starts
+    time_christmas_tree_started = 0.0
+
+    global left_lane_start_time, left_lane_end_time, left_lane_reaction_time, left_lane_total_time
+    left_lane_start_time = 0
+    left_lane_end_time = 0
+    left_lane_reaction_time = 0.00
+    left_lane_total_time = 0.00
+
+    global right_lane_start_time, right_lane_end_time, right_lane_reaction_time, right_lane_total_time
+    right_lane_start_time = 0
+    right_lane_end_time = 0
+    right_lane_reaction_time = 0.00
+    right_lane_total_time = 0.00
+
+    #Light states
+
+    #Left lights
+    global stage_1_left, stage_2_left, yellow_1_left, yellow_2_left, yellow_3_left, green_left, red_left
+    stage_1_left = False
+    stage_2_left = False
+    yellow_1_left = False
+    yellow_2_left = False
+    yellow_3_left = False
+    green_left = False
+    red_left = False
+
+    #right lights
+    global stage_1_right, stage_2_right, yellow_1_right, yellow_2_right, yellow_3_right, green_right, red_right
+    stage_1_right = False
+    stage_2_right = False
+    yellow_1_right = False
+    yellow_2_right = False
+    yellow_3_right = False
+    green_right = False
+    red_right = False
+
+    global left_lane_ready, right_lane_ready, left_lane_release_down, right_lane_release_down, ready_for_countdown 
+    left_lane_ready = False
+    right_lane_ready = False
+    left_lane_release_down = False
+    right_lane_release_down = False
+    ready_for_countdown = False
+
+    global left_car_released, left_car_release_time, right_car_released, right_car_release_time
+    left_car_released = False
+    left_car_release_time = 0.0
+    right_car_released = False
+    right_car_release_time = 0.0
+
+    global left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time, race_ended
+    left_car_finished = False
+    left_car_finish_time = 0.0
+    right_car_finished = False
+    right_car_finish_time = 0.0
+
+    race_ended = False
 # activate the pygame library . 
 # initiate pygame and give permission 
 # to use pygame's functionality. 
@@ -297,22 +371,22 @@ while True :
 
     left_elapsed_title = font.render('Elasped Time', True, white)
     display_surface.blit(left_elapsed_title, (50,300)) 
-    left_elapsed= font_big.render(str(left_lane_total_time), True, white)
+    left_elapsed= font_big.render(str(round(left_lane_total_time,3)), True, white)
     display_surface.blit(left_elapsed, (50,350)) 
                                                                                       
     right_elapsed_title = font.render('Elasped Time', True, white)
     display_surface.blit(right_elapsed_title, (580,300)) 
-    right_elapsed= font_big.render(str(right_lane_total_time), True, white)
+    right_elapsed= font_big.render(str(round(right_lane_total_time,3)), True, white)
     display_surface.blit(right_elapsed, (580,350)) 
 
     left_reaction_time_title = font.render('Reaction Time', True, white)
     display_surface.blit(left_reaction_time_title, (50,600)) 
-    left_reaction= font_big.render(str(left_lane_reaction_time), True, white)
+    left_reaction= font_big.render(str(round(left_lane_reaction_time,3)), True, white)
     display_surface.blit(left_reaction, (50,650))  
 
     right_reaction_time_title = font.render('Reaction Time', True, white)
     display_surface.blit(right_reaction_time_title, (580,600))
-    right_reaction= font_big.render(str(right_lane_reaction_time), True, white)
+    right_reaction= font_big.render(str(round(right_lane_reaction_time,3)), True, white)
     display_surface.blit(right_reaction, (580,650)) 
   
 
