@@ -1,6 +1,12 @@
 # import pygame module in this program 
 import pygame 
 import time
+from gpiozero import LED, Button
+
+left_button = Button(26)
+right_button = Button(16)
+left_finish_line = Button(4, pull_up=False)
+right_finish_line = Button(14, pull_up=False)
 
 #Variables  
 start_of_game_timer = time.clock()
@@ -59,54 +65,54 @@ race_ended = False
 
 #List of functions needed for the game
 
-def car_start_button_pressed(lane):
+def car_start_button_pressed(button):
     global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left, left_car_released, right_car_released
    
     if ready_for_countdown == False:
-        if lane == "left":
+        if button.pin.number == 26: # left lane
             left_lane_ready = True
             stage_1_left = True
             stage_2_left = True
-            print(lane + " ready for countdown")
-        if lane == "right":
+            print("left lane ready for countdown")
+        if button.pin.number == 16: #right lane
             right_lane_ready = True
             stage_1_right = True
             stage_2_right = True
-            print(lane + " ready for countdown")
+            print("right lane ready for countdown")
 
     if countdown_started == True:
-        if lane == "left":
+        if button.pin.number == 26: #left lane
             if green_left == True and red_left == False:
-                release_car(lane)
-                print(lane + " released")
+                release_car("left")
+                print("left lane released")
             else:
                 if left_car_released == False:
                     red_left = True
                     left_car_released = True
-                    finish_line_crossed(lane)
-                    print(lane + " disqualified")
+                    finish_line_crossed("left")
+                    print("left disqualified")
 
-        if lane == "right":
+        if button.pin.number == 16: #right lane
             if green_right == True and red_right == False:
-                release_car(lane)
-                print(lane + " released")
+                release_car("right")
+                print("right lane released")
             else:
                 if right_car_released == False:
                     red_right = True
                     right_car_released = True
-                    finish_line_crossed(lane)
-                    print(lane + " disqualified")
+                    finish_line_crossed("right")
+                    print("right disqualified")
     if race_ended == True:
         reset_game()
 
-def finish_line_crossed(lane):
+def finish_line_crossed(button):
     global left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
-    if lane == "left":
+    if button.pin.number == 4: #left lane
         if left_car_finished == False:
             left_car_finished = True
             left_car_finish_time = time.clock()
             print("Left car finished")
-    if lane == "right":
+    if button.pin.number == 14: #right lane
         if right_car_finished == False:
             right_car_finished = True
             right_car_finish_time = time.clock()
@@ -254,6 +260,12 @@ def reset_game():
     right_car_finish_time = 0.0
 
     race_ended = False
+    
+    
+right_button.when_pressed = car_start_button_pressed
+left_button.when_pressed = car_start_button_pressed
+left_finish_line.when_pressed = finish_line_crossed
+right_finish_line.when_pressed = finish_line_crossed
 # activate the pygame library . 
 # initiate pygame and give permission 
 # to use pygame's functionality. 
@@ -396,6 +408,7 @@ while True :
     if ready_for_countdown == True and countdown_started == False:
         start_countdown()
     end_race()
+
 
     # iterate over the list of Event objects 
     # that was returned by pygame.event.get() method. 
