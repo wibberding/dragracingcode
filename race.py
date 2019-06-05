@@ -3,10 +3,15 @@ import pygame
 import time
 from gpiozero import LED, Button
 
+left_gate = LED(2)
+right_gate = LED(3)
 left_button = Button(26)
 right_button = Button(16)
 left_finish_line = Button(4, pull_up=False)
 right_finish_line = Button(14, pull_up=False)
+
+left_gate.off()
+right_gate.off()
 
 #Variables  
 start_of_game_timer = time.clock()
@@ -128,16 +133,18 @@ def start_countdown():
     #reset times
 
 def release_car(lane):
-    global left_car_released, left_car_release_time, right_car_released, right_car_release_time
+    global left_car_released, left_car_release_time, right_car_released, right_car_release_time, left_lane_release_down, right_lane_release_down
     
     if lane == "left":
         if left_car_released == False:
             left_car_released = True
+            left_lane_release_down = True
             left_car_release_time = time.clock()
             print(lane + " car released")
     if lane == "right":
         if right_car_released == False:
             right_car_released = True
+            right_lane_release_down = True
             right_car_release_time = time.clock()
             print(lane + " car released")
 
@@ -151,13 +158,13 @@ def countdown_ready():
 def gate_control():
     global left_lane_release_down, right_lane_release_down
     if left_lane_release_down == True:
-        print("Left lane gate open")
+        left_gate.on()
     else:
-        print("Left lane gate closed")
+        left_gate.off()
     if right_lane_release_down == True:
-        print("Right lane gate open")
+        right_gate.on()
     else:
-        print("Right lane gate closed")
+        right_gate.off()
 
 def countdown_control():
     #control the light countdown
@@ -186,7 +193,7 @@ def countdown_control():
 
 
 def end_race():
-    global left_car_finished, right_car_finished, race_start_time, left_car_release_time, right_car_release_time, left_car_finish_time, right_car_finish_time, left_reaction, right_reaction, left_elapsed, right_elapsed, race_ended, left_lane_total_time, right_lane_total_time, left_lane_reaction_time, right_lane_reaction_time, left_car_release_time, right_car_release_time
+    global left_car_finished, right_car_finished, race_start_time, left_car_release_time, right_car_release_time, left_car_finish_time, right_car_finish_time, left_reaction, right_reaction, left_elapsed, right_elapsed, race_ended, left_lane_total_time, right_lane_total_time, left_lane_reaction_time, right_lane_reaction_time, left_car_release_time, right_car_release_time, right_lane_release_down, left_lane_release_down
     if left_car_finished == True and right_car_finished == True and race_ended == False:
         print("Race ended")
         race_ended = True
@@ -197,7 +204,8 @@ def end_race():
         right_lane_reaction_time = right_car_release_time - race_start_time
         print(left_elapsed)
         print(right_elapsed)
-        #reset variables
+        left_lane_release_down = False
+        right_lane_release_down = False
 
 def reset_game():
     global start_of_game_timer, race_start_time, countdown_started, time_christmas_tree_started
@@ -408,6 +416,7 @@ while True :
     if ready_for_countdown == True and countdown_started == False:
         start_countdown()
     end_race()
+    gate_control()
 
 
     # iterate over the list of Event objects 
