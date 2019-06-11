@@ -14,58 +14,58 @@ left_gate.off()
 right_gate.off()
 
 #Variables  
-start_of_game_timer = time.clock()
-race_start_time = 0
-countdown_started = False #When christmas tree starts
-time_christmas_tree_started = 0.0
+#start_of_game_timer = time.clock()
+#race_start_time = 0
+#countdown_started = False #When christmas tree starts
+#time_christmas_tree_started = 0.0
 
-left_lane_start_time = 0
-left_lane_end_time = 0
-left_lane_reaction_time = 0.00
-left_lane_total_time = 0.00
+#left_lane_start_time = 0
+#left_lane_end_time = 0
+#left_lane_reaction_time = 0.00
+#left_lane_total_time = 0.00
 
-right_lane_start_time = 0
-right_lane_end_time = 0
-right_lane_reaction_time = 0.00
-right_lane_total_time = 0.00
+#right_lane_start_time = 0
+#right_lane_end_time = 0
+#right_lane_reaction_time = 0.00
+#right_lane_total_time = 0.00
 
 #Light states
 
 #Left lights
-stage_1_left = False
-stage_2_left = False
-yellow_1_left = False
-yellow_2_left = False
-yellow_3_left = False
-green_left = False
-red_left = False
+#stage_1_left = False
+#stage_2_left = False
+#yellow_1_left = False
+#yellow_2_left = False
+#yellow_3_left = False
+#green_left = False
+#red_left = False
 
 #right lights
-stage_1_right = False
-stage_2_right = False
-yellow_1_right = False
-yellow_2_right = False
-yellow_3_right = False
-green_right = False
-red_right = False
+#stage_1_right = False
+#stage_2_right = False
+#yellow_1_right = False
+#yellow_2_right = False
+#yellow_3_right = False
+#green_right = False
+#red_right = False
 
-left_lane_ready = False
-right_lane_ready = False
-left_lane_release_down = False
-right_lane_release_down = False
-ready_for_countdown = False
+#left_lane_ready = False
+#right_lane_ready = False
+#left_lane_release_down = False
+#right_lane_release_down = False
+#ready_for_countdown = False
 
-left_car_released = False
-left_car_release_time = 0.0
-right_car_released = False
-right_car_release_time = 0.0
+#left_car_released = False
+#left_car_release_time = 0.0
+#right_car_released = False
+#right_car_release_time = 0.0
 
-left_car_finished = False
-left_car_finish_time = 0.0
-right_car_finished = False
-right_car_finish_time = 0.0
+#left_car_finished = False
+#left_car_finish_time = 0.0
+#right_car_finished = False
+#right_car_finish_time = 0.0
 
-race_ended = False
+#race_ended = False
 
 
 #List of functions needed for the game
@@ -269,7 +269,8 @@ def reset_game():
 
     race_ended = False
     
-    
+reset_game()
+  
 right_button.when_pressed = car_start_button_pressed
 left_button.when_pressed = car_start_button_pressed
 left_finish_line.when_pressed = finish_line_crossed
