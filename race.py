@@ -20,7 +20,7 @@ right_gate.off()
 #List of functions needed for the game
 
 def car_start_button_pressed(button):
-    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left, left_car_released, right_car_released
+    global ready_for_countdown, left_lane_ready, right_lane_ready, green_left, green_right, stage_1_left, stage_2_left, stage_1_right, stage_2_right, red_right, red_left, left_car_released, right_car_released, left_car_finish_time, right_car_finish_time, left_car_release_time, right_car_release_time
    
     if ready_for_countdown == False:
         if button.pin.number == 26: # left lane
@@ -43,7 +43,8 @@ def car_start_button_pressed(button):
                 if left_car_released == False:
                     red_left = True
                     left_car_released = True
-                    finish_line_crossed("left")
+                    left_car_release_time = time.clock()
+                    left_car_finish_time = time.clock + 10
                     print("left disqualified")
 
         if button.pin.number == 16: #right lane
@@ -54,7 +55,8 @@ def car_start_button_pressed(button):
                 if right_car_released == False:
                     red_right = True
                     right_car_released = True
-                    finish_line_crossed("right")
+                    right_car_release_time = time.clock()
+                    right_car_finish_time = time.clock + 10
                     print("right disqualified")
     if race_ended == True:
         reset_game()
@@ -143,7 +145,7 @@ def countdown_control():
                 
 def time_out_race():
 	global race_start_time, left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
-	if race_start_time != 0 and (race_start_time + 7) < time.clock():
+	if race_start_time != 0 and (race_start_time + 5) < time.clock():
 		if left_car_finished == False:
 			left_car_finish_time = time.clock()
 			left_car_finished = True
