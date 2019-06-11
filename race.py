@@ -3,6 +3,7 @@ import pygame
 import time
 from gpiozero import LED, Button
 
+#access to Raspberry Pi pins through the gpiozero library
 left_gate = LED(2)
 right_gate = LED(3)
 left_button = Button(26)
@@ -10,62 +11,10 @@ right_button = Button(16)
 left_finish_line = Button(4, pull_up=False)
 right_finish_line = Button(14, pull_up=False)
 
+#Initially closes the gates
 left_gate.off()
 right_gate.off()
 
-#Variables  
-#start_of_game_timer = time.clock()
-#race_start_time = 0
-#countdown_started = False #When christmas tree starts
-#time_christmas_tree_started = 0.0
-
-#left_lane_start_time = 0
-#left_lane_end_time = 0
-#left_lane_reaction_time = 0.00
-#left_lane_total_time = 0.00
-
-#right_lane_start_time = 0
-#right_lane_end_time = 0
-#right_lane_reaction_time = 0.00
-#right_lane_total_time = 0.00
-
-#Light states
-
-#Left lights
-#stage_1_left = False
-#stage_2_left = False
-#yellow_1_left = False
-#yellow_2_left = False
-#yellow_3_left = False
-#green_left = False
-#red_left = False
-
-#right lights
-#stage_1_right = False
-#stage_2_right = False
-#yellow_1_right = False
-#yellow_2_right = False
-#yellow_3_right = False
-#green_right = False
-#red_right = False
-
-#left_lane_ready = False
-#right_lane_ready = False
-#left_lane_release_down = False
-#right_lane_release_down = False
-#ready_for_countdown = False
-
-#left_car_released = False
-#left_car_release_time = 0.0
-#right_car_released = False
-#right_car_release_time = 0.0
-
-#left_car_finished = False
-#left_car_finish_time = 0.0
-#right_car_finished = False
-#right_car_finish_time = 0.0
-
-#race_ended = False
 
 
 #List of functions needed for the game
@@ -109,6 +58,7 @@ def car_start_button_pressed(button):
                     print("right disqualified")
     if race_ended == True:
         reset_game()
+
 
 def finish_line_crossed(button):
     global left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
@@ -190,7 +140,17 @@ def countdown_control():
                 green_left = True
             if red_right == False:
                 green_right = True
-
+                
+def time_out_race():
+	global race_start_time, left_car_finished, left_car_finish_time, right_car_finished, right_car_finish_time
+	if race_start_time != 0 and (race_start_time + 7) < time.clock():
+		if left_car_finished == False:
+			left_car_finish_time = time.clock()
+			left_car_finished = True
+		if right_car_finished == False:
+			right_car_finish_time = time.clock()
+			right_car_finished = True
+		end_race
 
 def end_race():
     global left_car_finished, right_car_finished, race_start_time, left_car_release_time, right_car_release_time, left_car_finish_time, right_car_finish_time, left_reaction, right_reaction, left_elapsed, right_elapsed, race_ended, left_lane_total_time, right_lane_total_time, left_lane_reaction_time, right_lane_reaction_time, left_car_release_time, right_car_release_time, right_lane_release_down, left_lane_release_down
@@ -199,13 +159,17 @@ def end_race():
         race_ended = True
         #Calculate times
         left_lane_total_time = left_car_finish_time - race_start_time
-        right_lane_total_time = right_car_finish_time - race_start_time
         left_lane_reaction_time = left_car_release_time - race_start_time
+        right_lane_total_time = right_car_finish_time - race_start_time
         right_lane_reaction_time = right_car_release_time - race_start_time
-        print(left_elapsed)
-        print(right_elapsed)
+        print(race_start_time)
+        print(left_car_finish_time)
+        print(left_car_release_time)
+        print(right_car_finish_time)
+        print(right_car_release_time)
         left_lane_release_down = False
         right_lane_release_down = False
+        #pygame.quit()
 
 def reset_game():
     global start_of_game_timer, race_start_time, countdown_started, time_christmas_tree_started
@@ -275,6 +239,8 @@ right_button.when_pressed = car_start_button_pressed
 left_button.when_pressed = car_start_button_pressed
 left_finish_line.when_pressed = finish_line_crossed
 right_finish_line.when_pressed = finish_line_crossed
+
+
 # activate the pygame library . 
 # initiate pygame and give permission 
 # to use pygame's functionality. 
@@ -418,31 +384,8 @@ while True :
         start_countdown()
     end_race()
     gate_control()
+    time_out_race()
 
-
-    # iterate over the list of Event objects 
-    # that was returned by pygame.event.get() method. 
-    for event in pygame.event.get() : 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
-                car_start_button_pressed("left")
-            if event.key == pygame.K_w:
-                car_start_button_pressed("right")
-            if event.key == pygame.K_a:
-                finish_line_crossed("left")
-            if event.key == pygame.K_s:
-                finish_line_crossed("right")
-
-        # if event object type is QUIT 
-        # then quitting the pygame 
-        # and program both. 
-        if event.type == pygame.QUIT : 
-  
-            # deactivates the pygame library 
-            pygame.quit() 
-  
-            # quit the program. 
-            quit() 
   
     # Draws the surface object to the screen.   
     pygame.display.flip()  
